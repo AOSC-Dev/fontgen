@@ -27,14 +27,17 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(JPEG REQUIRED)
+find_package(PNG REQUIRED)
 find_package(Freetype REQUIRED)
 
 add_executable(fontgen fontgen.cpp bitmap.cpp utf8.cpp)
 target_compile_options(fontgen PRIVATE -std=c++11 ${WARNINGS_CXX_FLAGS})
 target_include_directories(fontgen PRIVATE ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(fontgen PRIVATE ${PNG_INCLUDE_DIRS})
 target_link_libraries(fontgen
   ${FREETYPE_LIBRARIES}
   ${JPEG_LIBRARIES}
+  ${PNG_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT})
 
 # EOF #

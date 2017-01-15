@@ -48,6 +48,7 @@ public:
   void clear();
   void write_pgm(const std::string& filename);
   void write_jpg(const std::string& filename);
+  void write_alpha_png(const std::string& filename);
 
   void truncate_height(int height);
 

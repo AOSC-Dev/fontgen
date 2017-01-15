@@ -77,7 +77,7 @@ void generate_image(std::vector<Glyph>& glyphs,
                     int border,
                     int image_width,
                     int image_height,
-                    const std::string& pgm_filename,
+                    const std::string& png_filename,
                     const std::string& metadata_filename)
 {
   std::ofstream metadata(metadata_filename.c_str());
@@ -132,7 +132,7 @@ void generate_image(std::vector<Glyph>& glyphs,
   metadata << ";; EOF ;;" << std::endl;
 
   image_bitmap.truncate_height(y_pos + row_height + border);
-  image_bitmap.write_pgm(pgm_filename);
+  image_bitmap.write_alpha_png(png_filename);
   std::cout << "ImageSize: " << image_bitmap.get_width() << "x" << image_bitmap.get_height() << std::endl;
 }
 
@@ -320,9 +320,9 @@ int main(int argc, char** argv)
           std::vector<Glyph> glyphs;
 
           generate_font(ttf_filename, pixel_size, unicodes, glyphs);
-          generate_image(glyphs, pixel_size, border, image_width, image_height, "/tmp/out.pgm", "/tmp/out.font");
+          generate_image(glyphs, pixel_size, border, image_width, image_height, "/tmp/out.png", "/tmp/out.font");
 
-          std::cout << "Wrote /tmp/out.pgm\n"
+          std::cout << "Wrote /tmp/out.png\n"
                     << "Wrote /tmp/out.font\n";
 
           FT_Done_FreeType(library);
