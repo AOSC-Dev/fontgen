@@ -48,7 +48,14 @@ public:
   void clear();
   void write_pgm(const std::string& filename);
   void write_jpg(const std::string& filename);
-  void write_alpha_png(const std::string& filename);
+  void write_alpha_png(const std::string& filename)
+    {
+      write_png(filename, 0);
+    }
+  void write_green_black_png(const std::string& filename)
+    {
+      write_png(filename, 1);
+    }
 
   void truncate_height(int height);
 
@@ -60,6 +67,7 @@ public:
 private:
   Bitmap (const Bitmap&);
   Bitmap& operator= (const Bitmap&);
+  void write_png(const std::string& filename, int border);
 };
 
 #endif

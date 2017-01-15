@@ -139,7 +139,7 @@ Bitmap::write_jpg(const std::string& filename)
 }
 
 void
-Bitmap::write_alpha_png(const std::string& filename)
+Bitmap::write_png(const std::string& filename, int border)
 {
   png_structp png_ptr;
   png_infop info_ptr;
@@ -147,7 +147,7 @@ Bitmap::write_alpha_png(const std::string& filename)
   /* More stuff */
   FILE * outfile;		/* target file */
   unsigned char * tmpbuf =
-    (unsigned char *) malloc(get_width() * get_height() * 2);
+    (unsigned char *) malloc(get_width() * get_height() * 4);
   /* temporary buffer */
 
   /* initialize PNG library */
@@ -173,11 +173,13 @@ Bitmap::write_alpha_png(const std::string& filename)
     }
 
   png_set_IHDR(png_ptr, info_ptr, get_width(), get_height(), 8,
-    PNG_COLOR_TYPE_GRAY_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
+    PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
     PNG_FILTER_TYPE_BASE);
 
   png_color_8 sig_bit;
-  sig_bit.gray = 8;
+  sig_bit.red = 8;
+  sig_bit.green = 8;
+  sig_bit.blue = 8;
   sig_bit.alpha = 8;
   png_set_sBIT(png_ptr, info_ptr, &sig_bit);
 
@@ -187,15 +189,30 @@ Bitmap::write_alpha_png(const std::string& filename)
     {
       for (int x = 0; x < get_width(); ++x)
         {
-          tmpbuf[(y * get_width() + x) * 2] = 255;
-          tmpbuf[(y * get_width() + x) * 2 + 1] = 255 - at(x,y);
+	  if(!border)
+            {
+              tmpbuf[(y * get_width() + x) * 4] = 255;
+              tmpbuf[(y * get_width() + x) * 4 + 1] = 255;
+              tmpbuf[(y * get_width() + x) * 4 + 2] = 255;
+              tmpbuf[(y * get_width() + x) * 4 + 3] = 255 - at(x, y);
+	    }
+	  else
+            {
+              tmpbuf[(y * get_width() + x) * 4] = 0;
+              tmpbuf[(y * get_width() + x) * 4 + 1] = 255 - at(x, y);
+              tmpbuf[(y * get_width() + x) * 4 + 2] = 0;
+	      if (at(x, y) == 255)
+		      tmpbuf[(y * get_width() + x) * 4 + 3] = 0;
+	      else
+		      tmpbuf[(y * get_width() + x) * 4 + 3] = 255;
+	    }
 	}
     }
 
   png_bytep row_pointer[get_height()];	/* pointer to row[s] */
 
   for(int y = 0; y < get_height(); ++y)
-    row_pointer[y] = &tmpbuf[y * get_width() * 2];
+    row_pointer[y] = &tmpbuf[y * get_width() * 4];
   png_set_rows(png_ptr, info_ptr, row_pointer);
   png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
 
